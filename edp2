@@ -1,0 +1,185 @@
+Vashuki2004
+just now (edited)
+//LED BLINKING
+
+int pins = {11,12,13};
+void setup() {
+for(int i=0; i<3; i++) pinMode(pins[i], OUTPUT);
+}
+void helper(int pin) {
+digitalWrite(pin, HIGH);
+delay(500);
+digitalWrite(pin, LOW);
+delay(500);
+}
+void loop() {
+for(int i=0; i<3; i++) helper(pins[i]);
+}
+
+//USER DEFINED PATTERN
+
+int order[3];
+int pins[3] = {13,12,11};
+void setup()
+{
+for(int i=0; i<3; i++) pinMode(pins[i], OUTPUT);
+Serial.begin(9600);
+delay(1000);
+Serial.println("Enter the order in which you want the three LEDs to blink");
+}
+void helper(int pin) {
+digitalWrite(pin, HIGH);
+delay(500);
+digitalWrite(pin, LOW);
+delay(500);
+}
+void loop()
+{
+if (Serial.available())
+{
+for (int i=0; i<3; i++) order[i] = Serial.parseInt();
+}
+for(int i=0;i<3;i++) helper(pins[order[i]-1]);
+}
+
+// LED FADING
+
+int pins[5] = {13,12,11,10,9};
+const int WAITTIME = 50;
+const int FADE = 5;
+int gap = 1000;
+void setup()
+{
+for(int i=0; i<5; i++) pinMode(pins[i], OUTPUT);
+Serial.begin(9600);
+delay(1000);
+Serial.println("Type 1 to switch on blink in pattern");
+Serial.println("Type 2 to switch on fade in pattern");
+Serial.println("Type something!");
+}
+void helper(int pin, int gap) {
+digitalWrite(pin, HIGH);
+delay(gap);
+digitalWrite(pin, LOW);
+delay(gap);
+}
+void fade(int LED_PIN) {
+int BRIGHTNESS = 0;
+while ( BRIGHTNESS <= 255 ){
+analogWrite( LED_PIN, BRIGHTNESS );
+delay( WAITTIME );
+BRIGHTNESS = BRIGHTNESS + FADE;
+}
+BRIGHTNESS=255;
+while ( BRIGHTNESS >= 0 ){
+analogWrite( LED_PIN, BRIGHTNESS );
+delay( WAITTIME );
+BRIGHTNESS = BRIGHTNESS - FADE;
+}
+}
+void loop()
+{
+if(Serial.available()){
+int input = Serial.parseInt();
+Serial.println(input);
+switch (input) {
+case 1:
+for(int i=gap;i>0;i=i-100) {
+for(int j=0; j<5; j++) helper(pins[j], gap);
+}
+break;
+case 2:
+for(int i=gap;i>0;i=i-100) {
+for(int j=0; j<5; j++) fade(pins[j]);
+}
+break;
+}
+}
+}
+
+// BUGGY MOVEMENT
+
+int pins[4] = {5,6,7,8};
+int D = 1000;
+void setup() {
+for(int i=0; i<4; i++) pinMode(pins[i], OUTPUT);
+}
+void forward() {
+digitalWrite(pins[0], HIGH);
+digitalWrite(pins[3], HIGH);
+digitalWrite(pins[1], LOW);
+digitalWrite(pins[2], LOW);
+delay(D3);
+}
+void backward() {
+digitalWrite(pins[1], HIGH);
+digitalWrite(pins[2], HIGH);
+digitalWrite(pins[0], LOW);
+digitalWrite(pins[3], LOW);
+delay(D3);
+}
+void left() {
+digitalWrite(pins[3], HIGH);
+digitalWrite(pins[0], LOW);
+digitalWrite(pins[1], LOW);
+digitalWrite(pins[2], LOW);
+delay(D1.42);
+}
+void right() {
+digitalWrite(pins[0], HIGH);
+digitalWrite(pins[1], LOW);
+digitalWrite(pins[2], LOW);
+digitalWrite(pins[3], LOW);
+delay(D1.42);
+}
+void clockwise() {
+digitalWrite(pins[0], HIGH);
+digitalWrite(pins[2], HIGH);
+digitalWrite(pins[1], LOW);
+digitalWrite(pins[3], LOW);
+delay(D3);
+}
+void anticlockwise() {
+digitalWrite(pins[1], HIGH);
+digitalWrite(pins[3], HIGH);
+digitalWrite(pins[0], LOW);
+digitalWrite(pins[2], LOW);
+delay(D3);
+}
+void brake() {
+digitalWrite(pins[0], LOW);
+digitalWrite(pins[1], LOW);
+digitalWrite(pins[2], LOW);
+digitalWrite(pins[3], LOW);
+delay(D);
+}
+
+// PLUS TRACK
+
+void plusTrack() {
+forward();
+backward();
+brake();
+backward();
+forward();
+brake();
+right();
+forward();
+backward();
+brake();
+left();
+backward();
+forward();
+brake();
+left();
+forward();
+backward();
+brake();
+right();
+clockwise();
+anticlockwise();
+brake();
+}
+void loop() {
+plusTrack();
+}
